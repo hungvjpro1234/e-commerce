@@ -1,0 +1,32 @@
+{
+  "dataset": "D:\\E-COMMERCE\\docs\\sample-data\\data_user500.csv",
+  "synced_to_neo4j": true,
+  "node_counts": {
+    "users": 500,
+    "categories": 10,
+    "products": 94,
+    "behaviors": 6119
+  },
+  "relationship_counts": {
+    "performed": 6119,
+    "on_product": 3441,
+    "in_category": 4630,
+    "interested_in": 1115,
+    "belongs_to": 94
+  },
+  "verified_counts": {
+    "node_counts": {
+      "users": 500,
+      "categories": 10,
+      "products": 94,
+      "behaviors": 6119
+    },
+    "relationship_counts": {
+      "performed": 6119,
+      "on_product": 3441,
+      "in_category": 4630,
+      "interested_in": 1115,
+      "belongs_to": 94
+    }
+  }
+}

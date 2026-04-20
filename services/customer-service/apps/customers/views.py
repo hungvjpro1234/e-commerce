@@ -1,3 +1,4 @@
+from apps.behavior_tracking import emit_behavior_event
 from django.conf import settings
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -21,6 +22,11 @@ class CustomerRegisterAPIView(APIView):
         serializer = CustomerRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         customer = serializer.save()
+        emit_behavior_event(
+            user_id=customer.id,
+            event_type="register",
+            metadata={"source": "customer-service"},
+        )
         return ok(
             CustomerProfileSerializer(customer).data,
             "Customer account created.",
@@ -42,6 +48,11 @@ class CustomerLoginAPIView(APIView):
                 "Invalid credentials.",
                 status_code=status.HTTP_401_UNAUTHORIZED,
             )
+        emit_behavior_event(
+            user_id=customer.id,
+            event_type="login",
+            metadata={"source": "customer-service"},
+        )
         token_payload = issue_customer_token(customer, settings.SERVICE_NAME)
         return ok(token_payload, "Login successful.")
 

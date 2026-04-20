@@ -1,0 +1,23 @@
+[
+  {
+    "model": "rnn",
+    "accuracy": 0.8974008207934336,
+    "weighted_f1": 0.8930672579806768,
+    "macro_f1": 0.787119148758954,
+    "best_epoch": 4
+  },
+  {
+    "model": "lstm",
+    "accuracy": 0.9015047879616963,
+    "weighted_f1": 0.8955854078837868,
+    "macro_f1": 0.7888853412799773,
+    "best_epoch": 7
+  },
+  {
+    "model": "bilstm",
+    "accuracy": 0.9042407660738714,
+    "weighted_f1": 0.8982173150116751,
+    "macro_f1": 0.7925426120692334,
+    "best_epoch": 2
+  }
+]

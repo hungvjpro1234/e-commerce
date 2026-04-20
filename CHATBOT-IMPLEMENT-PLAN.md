@@ -20,6 +20,176 @@ This plan is based on the current repository state:
 - Neo4j is not yet integrated
 - No completed behavior-event pipeline or model-training pipeline yet.
 
+Phase 0 implementation output is documented in `docs/chatbot-phase-0-spec.md`.
+Current implementation handoff/test context is documented in
+`docs/chatbot-implementation-status.md`.
+
+---
+
+## 1A. Implementation Status
+
+This section records what has already been implemented after each phase so the
+plan can also be used as a live handoff document during testing.
+
+### Phase 0 - Completed
+
+- Added `docs/chatbot-phase-0-spec.md` as the frozen implementation spec
+- Locked the canonical 8 behaviors:
+  - `register`
+  - `login`
+  - `search`
+  - `view_product`
+  - `add_to_cart`
+  - `update_cart_quantity`
+  - `remove_from_cart`
+  - `purchase`
+- Locked the canonical event schema for `POST /api/internal/events`
+- Locked service responsibilities for:
+  - `behavior-service`
+  - `recommendation-service`
+  - `chatbot-service`
+  - `web-service`
+
+### Phase 1 - Completed
+
+- Implemented real `behavior-service` runtime under `services/behavior-service`
+- Added `behavior-service` and `behavior-db` to `docker-compose.yml`
+- Implemented:
+  - `POST /api/internal/events`
+  - `GET /api/events`
+  - `GET /api/events/export`
+- Added internal auth using:
+  - `X-Internal-Service-Token`
+  - `X-Service-Name`
+- Added event model, serializer, views, migration, and API tests
+
+### Phase 2 - Completed
+
+- Added canonical event emission in `customer-service` for:
+  - `register`
+  - `login`
+  - `add_to_cart`
+  - `update_cart_quantity`
+  - `remove_from_cart`
+  - `purchase`
+- Added canonical event emission in `web-service` for:
+  - `search`
+  - `view_product`
+- Replaced old `cart_add` naming with canonical `add_to_cart`
+- Added customer-service and web-service tracking tests
+
+### Phase 3 - Completed
+
+- Implemented dataset generator script:
+  - `services/recommendation-service/scripts/generate_data_user500.py`
+- Generated:
+  - `docs/sample-data/data_user500.csv`
+  - `docs/sample-data/data_user500_sample20.csv`
+- Dataset outcome:
+  - `500` users
+  - `6119` rows
+  - all `8` behavior types present
+- Added generator smoke test
+
+### Phase 4 - Completed
+
+- Implemented preprocessing pipeline:
+  - `services/recommendation-service/scripts/preprocess_behavior_sequences.py`
+- Generated artifacts under:
+  - `services/recommendation-service/artifacts/preprocessed`
+- Main outputs:
+  - `train.jsonl`
+  - `val.jsonl`
+  - `test.jsonl`
+  - `encoders.json`
+  - `summary.json`
+- Summary outcome:
+  - `total_samples = 4930`
+  - `sequence_length = 5`
+  - `num_classes = 8`
+- Added preprocessing test
+
+### Phase 5 - Completed
+
+- Implemented training/evaluation pipeline:
+  - `services/recommendation-service/scripts/train_behavior_models.py`
+- Trained and compared:
+  - `RNN`
+  - `LSTM`
+  - `biLSTM`
+- Generated artifacts under:
+  - `services/recommendation-service/artifacts/trained_models`
+- Selected:
+  - `model_best = biLSTM`
+- Final metrics snapshot:
+  - `RNN weighted_f1 = 0.8931`
+  - `LSTM weighted_f1 = 0.8956`
+  - `biLSTM weighted_f1 = 0.8982`
+- Added training smoke test
+
+### Phase 6 - Completed
+
+- Implemented real `recommendation-service` runtime under
+  `services/recommendation-service`
+- Added `recommendation-service` and `recommendation-db` to Compose
+- Implemented APIs:
+  - `POST /api/recommend/predict-next-behavior`
+  - `POST /api/recommend/products`
+- Runtime uses `model_best.pt`
+- Recommendation strategy is hybrid:
+  - next-behavior prediction
+  - rule-based candidate retrieval
+  - explainable `reason_codes`
+- Added API tests for recommendation endpoints
+
+### Phase 7 - Completed
+
+- Added `neo4j` to `docker-compose.yml`
+- Added graph import pipeline:
+  - `services/chatbot-service/scripts/import_kb_graph.py`
+- Imported and verified live KB graph in Neo4j
+- Added sample Cypher file:
+  - `docs/sample-data/kb_graph_queries.cypher`
+- Verified graph counts:
+  - `users = 500`
+  - `categories = 10`
+  - `products = 94`
+  - `behaviors = 6119`
+- Graph import summary stored in:
+  - `services/chatbot-service/artifacts/kb_graph_import_summary.json`
+
+### Phase 8 - Completed
+
+- Implemented real `chatbot-service` runtime under `services/chatbot-service`
+- Added `chatbot-service` to Compose
+- Implemented APIs:
+  - `POST /api/chat`
+  - `POST /api/chat/context`
+- Chatbot is graph-backed and grounded:
+  - Neo4j retrieval
+  - evidence list in responses
+  - fallback handling when graph is unavailable
+- Added chat API tests and live smoke checks against Neo4j
+
+### Phase 9 - Completed
+
+- Integrated recommendation and chat into `web-service`
+- Search page now calls recommendation API and renders recommendation block
+- Cart page now calls recommendation API and renders recommendation block
+- Added custom chat widget in `services/web-service/templates/base.html`
+- Added web proxy endpoints:
+  - `POST /chat/context`
+  - `POST /chat/message`
+- Added session-based recent behavior context in `web-service` to feed
+  recommendation and chat flows
+- Added Phase 9 web integration tests
+
+### Phase 10 - Pending
+
+- Final end-to-end testing
+- Screenshot collection
+- Report-oriented runbook and evidence packaging
+
 ---
 
 ## 2. Current System State

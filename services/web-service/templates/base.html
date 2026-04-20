@@ -15,7 +15,6 @@
                 <a href="/products">Products</a>
                 <a href="/cart">Cart</a>
                 <a href="/orders">Orders</a>
-
                 <a href="/staff/dashboard">Staff</a>
             </nav>
             <div class="nav-auth">
@@ -45,7 +44,203 @@
         {% endif %}
         {% block content %}{% endblock %}
     </main>
+    {{ chat_context|json_script:"chat-context-data" }}
+    <div id="chat-fab">
+        <div id="chat-panel" aria-live="polite">
+            <div class="chat-panel-header">
+                <div class="chat-panel-header-info">
+                    <div class="chat-panel-avatar">AI</div>
+                    <div>
+                        <div class="chat-panel-title">Shopping Assistant</div>
+                        <div class="chat-panel-subtitle">Grounded by your product graph</div>
+                    </div>
+                </div>
+                <button class="chat-panel-close" id="chat-close" type="button" aria-label="Close chat">x</button>
+            </div>
+            <div id="widget-messages">
+                <div class="widget-empty" id="chat-empty-state">
+                    <div class="widget-empty-icon">Shop</div>
+                    <div>Ask for product ideas, category tips, or cart suggestions.</div>
+                </div>
+            </div>
+            <div class="chat-quick-actions" id="chat-suggestions"></div>
+            <form class="chat-panel-input" id="chat-form">
+                {% csrf_token %}
+                <textarea id="chat-input" rows="1" placeholder="Ask for a recommendation..."></textarea>
+                <button class="chat-send-btn" id="chat-send" type="submit" aria-label="Send message">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 21l20-9L2 3v7l14 2-14 2z"></path></svg>
+                </button>
+            </form>
+        </div>
+        <button id="chat-toggle" type="button" aria-label="Open chat">
+            <span id="chat-unread">1</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2z"></path></svg>
+        </button>
+    </div>
+    <script>
+        (() => {
+            const chatContextNode = document.getElementById("chat-context-data");
+            const chatContext = chatContextNode ? JSON.parse(chatContextNode.textContent) : {};
+            const panel = document.getElementById("chat-panel");
+            const toggle = document.getElementById("chat-toggle");
+            const closeBtn = document.getElementById("chat-close");
+            const messages = document.getElementById("widget-messages");
+            const emptyState = document.getElementById("chat-empty-state");
+            const form = document.getElementById("chat-form");
+            const input = document.getElementById("chat-input");
+            const sendBtn = document.getElementById("chat-send");
+            const suggestions = document.getElementById("chat-suggestions");
+            const history = [];
+            let seededContext = false;
 
+            const starterPrompts = {
+                product_detail: ["Show me similar items", "What makes this category different?", "Recommend alternatives under this category"],
+                cart: ["What should I add with these cart items?", "Suggest complementary products", "Help me compare what is already in my cart"],
+                product_listing_search: ["Recommend products like my search", "Show me the best options in this category", "What else should I look at?"],
+                product_listing: ["Help me discover popular categories", "What should I browse first?", "Recommend something for me"],
+                global_widget: ["Recommend something practical", "What can I buy in this store?", "Help me find a category"],
+            };
 
+            function getCookie(name) {
+                const cookies = document.cookie ? document.cookie.split(";") : [];
+                for (const cookie of cookies) {
+                    const trimmed = cookie.trim();
+                    if (trimmed.startsWith(name + "=")) {
+                        return decodeURIComponent(trimmed.slice(name.length + 1));
+                    }
+                }
+                return "";
+            }
+
+            function renderSuggestions() {
+                const prompts = starterPrompts[chatContext.page_context] || starterPrompts.global_widget;
+                suggestions.innerHTML = prompts.map((prompt) => (
+                    `<button class="chat-suggestion" type="button">${prompt}</button>`
+                )).join("");
+                suggestions.querySelectorAll(".chat-suggestion").forEach((button) => {
+                    button.addEventListener("click", () => {
+                        input.value = button.textContent;
+                        form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+                    });
+                });
+            }
+
+            function appendMessage(role, text, evidence = []) {
+                if (emptyState) {
+                    emptyState.remove();
+                }
+                const wrapper = document.createElement("div");
+                wrapper.className = `wmsg ${role === "user" ? "wmsg-user" : "wmsg-bot"}`;
+                wrapper.textContent = text;
+                if (role !== "user" && evidence.length) {
+                    const citations = document.createElement("div");
+                    citations.className = "wmsg-citations";
+                    evidence.forEach((item) => {
+                        const tag = document.createElement("span");
+                        tag.className = "wmsg-citation-tag";
+                        tag.textContent = item.title || item.id || item.type;
+                        citations.appendChild(tag);
+                    });
+                    wrapper.appendChild(citations);
+                }
+                messages.appendChild(wrapper);
+                messages.scrollTop = messages.scrollHeight;
+            }
+
+            function appendTyping() {
+                const typing = document.createElement("div");
+                typing.className = "wmsg-typing";
+                typing.id = "chat-typing";
+                typing.innerHTML = "<span></span><span></span><span></span>";
+                messages.appendChild(typing);
+                messages.scrollTop = messages.scrollHeight;
+            }
+
+            function removeTyping() {
+                const typing = document.getElementById("chat-typing");
+                if (typing) {
+                    typing.remove();
+                }
+            }
+
+            async function postJson(url, payload) {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    },
+                    body: JSON.stringify(payload),
+                });
+                if (!response.ok) {
+                    const errorPayload = await response.json().catch(() => ({}));
+                    throw new Error(errorPayload.message || "The assistant is temporarily unavailable.");
+                }
+                return response.json();
+            }
+
+            async function seedContext() {
+                if (seededContext) {
+                    return;
+                }
+                seededContext = true;
+                try {
+                    const response = await postJson("/chat/context", { context: chatContext });
+                    const data = response.data || {};
+                    if (data.evidence && data.evidence.length) {
+                        appendMessage("assistant", "I can use your current shopping context to suggest products and explain categories.", data.evidence);
+                    }
+                } catch (error) {
+                    seededContext = false;
+                }
+            }
+
+            async function sendMessage(message) {
+                appendMessage("user", message);
+                history.push({ role: "user", text: message });
+                appendTyping();
+                sendBtn.disabled = true;
+                try {
+                    const response = await postJson("/chat/message", {
+                        message,
+                        context: chatContext,
+                        history,
+                    });
+                    const data = response.data || {};
+                    removeTyping();
+                    appendMessage("assistant", data.answer || "I could not find a grounded answer yet.", data.evidence || []);
+                    history.push({ role: "assistant", text: data.answer || "" });
+                } catch (error) {
+                    removeTyping();
+                    appendMessage("assistant", error.message || "The assistant is temporarily unavailable.");
+                } finally {
+                    sendBtn.disabled = false;
+                    input.focus();
+                }
+            }
+
+            toggle.addEventListener("click", async () => {
+                panel.classList.toggle("open");
+                if (panel.classList.contains("open")) {
+                    input.focus();
+                    await seedContext();
+                }
+            });
+
+            closeBtn.addEventListener("click", () => panel.classList.remove("open"));
+
+            form.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                const message = input.value.trim();
+                if (!message) {
+                    return;
+                }
+                input.value = "";
+                await sendMessage(message);
+            });
+
+            renderSuggestions();
+        })();
+    </script>
 </body>
 </html>

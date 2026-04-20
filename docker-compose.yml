@@ -197,6 +197,61 @@ services:
     depends_on:
       - gaming-db
 
+  behavior-service:
+    <<: *app-base
+    build:
+      context: ./services/behavior-service
+    container_name: behavior-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/behavior-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${BEHAVIOR_SERVICE_PORT:-8014}:8000"
+    depends_on:
+      - behavior-db
+
+  recommendation-service:
+    <<: *app-base
+    build:
+      context: ./services/recommendation-service
+    container_name: recommendation-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/recommendation-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${RECOMMENDATION_SERVICE_PORT:-8015}:8000"
+    depends_on:
+      - recommendation-db
+
+  chatbot-service:
+    <<: *app-base
+    build:
+      context: ./services/chatbot-service
+    container_name: chatbot-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/chatbot-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${CHATBOT_SERVICE_PORT:-8006}:8000"
+    depends_on:
+      - chatbot-db
+      - neo4j
+
+  neo4j:
+    image: neo4j:5.20
+    container_name: neo4j
+    environment:
+      NEO4J_AUTH: "${NEO4J_USERNAME:-neo4j}/${NEO4J_PASSWORD:-neo4jpassword}"
+      NEO4J_dbms_default__database: ${NEO4J_DATABASE:-neo4j}
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+
   chatbot-db:
     image: postgres:16-alpine
     environment:
@@ -340,6 +395,28 @@ services:
     volumes:
       - gaming_db_data:/var/lib/postgresql/data
 
+  behavior-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${BEHAVIOR_DB_NAME}
+      POSTGRES_USER: ${BEHAVIOR_DB_USER}
+      POSTGRES_PASSWORD: ${BEHAVIOR_DB_PASSWORD}
+    ports:
+      - "5446:5432"
+    volumes:
+      - behavior_db_data:/var/lib/postgresql/data
+
+  recommendation-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${RECOMMENDATION_DB_NAME}
+      POSTGRES_USER: ${RECOMMENDATION_DB_USER}
+      POSTGRES_PASSWORD: ${RECOMMENDATION_DB_PASSWORD}
+    ports:
+      - "5447:5432"
+    volumes:
+      - recommendation_db_data:/var/lib/postgresql/data
+
 volumes:
   chatbot_db_data:
   staff_db_data:
@@ -354,3 +431,6 @@ volumes:
   food_db_data:
   sports_db_data:
   gaming_db_data:
+  behavior_db_data:
+  recommendation_db_data:
+  neo4j_data:

@@ -1,0 +1,21 @@
+user_id,session_id,timestamp,behavior_type,product_service,product_id,category,search_keyword,quantity,step_in_session,label_next_behavior,source_service,is_synthetic
+ed268ee2-0ea6-5eb0-bc5d-3867931d51e9,2c7e3b9e-9e1f-50b0-8987-6a5269bb6f42,2026-01-01T18:06:00+00:00,register,,,,,,1,login,customer-service,1
+ed268ee2-0ea6-5eb0-bc5d-3867931d51e9,2c7e3b9e-9e1f-50b0-8987-6a5269bb6f42,2026-01-01T18:14:00+00:00,login,,,,,,2,search,customer-service,1
+ed268ee2-0ea6-5eb0-bc5d-3867931d51e9,2c7e3b9e-9e1f-50b0-8987-6a5269bb6f42,2026-01-01T18:20:00+00:00,search,,,Food & Drinks,snack,,3,view_product,web-service,1
+ed268ee2-0ea6-5eb0-bc5d-3867931d51e9,2c7e3b9e-9e1f-50b0-8987-6a5269bb6f42,2026-01-01T18:31:00+00:00,view_product,food,72fc5eec-b954-5b32-b13c-ba9f26f16be1,Food & Drinks,,,4,add_to_cart,web-service,1
+ed268ee2-0ea6-5eb0-bc5d-3867931d51e9,2c7e3b9e-9e1f-50b0-8987-6a5269bb6f42,2026-01-01T18:39:00+00:00,add_to_cart,food,72fc5eec-b954-5b32-b13c-ba9f26f16be1,Food & Drinks,,1,5,update_cart_quantity,customer-service,1
+ed268ee2-0ea6-5eb0-bc5d-3867931d51e9,2c7e3b9e-9e1f-50b0-8987-6a5269bb6f42,2026-01-01T18:44:00+00:00,update_cart_quantity,food,72fc5eec-b954-5b32-b13c-ba9f26f16be1,Food & Drinks,,1,6,purchase,customer-service,1
+ed268ee2-0ea6-5eb0-bc5d-3867931d51e9,2c7e3b9e-9e1f-50b0-8987-6a5269bb6f42,2026-01-01T18:49:00+00:00,purchase,food,72fc5eec-b954-5b32-b13c-ba9f26f16be1,Food & Drinks,,2,7,,customer-service,1
+321eb181-03f5-50c9-bb48-888d34319d6e,17ee3246-1126-5b68-8ad0-4fa5860288ce,2026-01-01T19:11:00+00:00,login,,,,,,1,search,customer-service,1
+321eb181-03f5-50c9-bb48-888d34319d6e,17ee3246-1126-5b68-8ad0-4fa5860288ce,2026-01-01T19:16:00+00:00,search,,,Home Appliances,blender,,2,view_product,web-service,1
+321eb181-03f5-50c9-bb48-888d34319d6e,17ee3246-1126-5b68-8ad0-4fa5860288ce,2026-01-01T19:23:00+00:00,view_product,home-appliance,b22fe093-1c52-56ba-9a0b-52046845c96f,Home Appliances,,,3,,web-service,1
+6a5f199a-bd14-56e2-a2e2-52d5641fa422,a2912c34-a6fc-59ab-abe5-c907e7436b8e,2026-01-01T20:11:00+00:00,login,,,,,,1,search,customer-service,1
+6a5f199a-bd14-56e2-a2e2-52d5641fa422,a2912c34-a6fc-59ab-abe5-c907e7436b8e,2026-01-01T20:17:00+00:00,search,,,Laptop,samsung,,2,view_product,web-service,1
+6a5f199a-bd14-56e2-a2e2-52d5641fa422,a2912c34-a6fc-59ab-abe5-c907e7436b8e,2026-01-01T20:25:00+00:00,view_product,laptop,20618e51-7524-55f1-8943-d19d732f7e91,Laptop,,,3,view_product,web-service,1
+6a5f199a-bd14-56e2-a2e2-52d5641fa422,a2912c34-a6fc-59ab-abe5-c907e7436b8e,2026-01-01T20:33:00+00:00,view_product,laptop,20618e51-7524-55f1-8943-d19d732f7e91,Laptop,,,4,add_to_cart,web-service,1
+6a5f199a-bd14-56e2-a2e2-52d5641fa422,a2912c34-a6fc-59ab-abe5-c907e7436b8e,2026-01-01T20:39:00+00:00,add_to_cart,laptop,20618e51-7524-55f1-8943-d19d732f7e91,Laptop,,1,5,purchase,customer-service,1
+6a5f199a-bd14-56e2-a2e2-52d5641fa422,a2912c34-a6fc-59ab-abe5-c907e7436b8e,2026-01-01T20:48:00+00:00,purchase,laptop,20618e51-7524-55f1-8943-d19d732f7e91,Laptop,,3,6,,customer-service,1
+6b0bf5b5-2023-531f-a9e4-61703d9408e6,da336920-97c2-5994-9c84-3006900d970f,2026-01-01T22:10:00+00:00,register,,,,,,1,login,customer-service,1
+6b0bf5b5-2023-531f-a9e4-61703d9408e6,da336920-97c2-5994-9c84-3006900d970f,2026-01-01T22:16:00+00:00,login,,,,,,2,search,customer-service,1
+6b0bf5b5-2023-531f-a9e4-61703d9408e6,da336920-97c2-5994-9c84-3006900d970f,2026-01-01T22:20:00+00:00,search,,,Home Appliances,rice cooker,,3,view_product,web-service,1
+6b0bf5b5-2023-531f-a9e4-61703d9408e6,da336920-97c2-5994-9c84-3006900d970f,2026-01-01T22:23:00+00:00,view_product,home-appliance,a9ae89e7-becb-53f4-8a03-fd576261865d,Home Appliances,,,4,add_to_cart,web-service,1

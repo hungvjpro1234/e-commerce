@@ -1,0 +1,57 @@
+{
+  "input_csv": "D:\\E-COMMERCE\\docs\\sample-data\\data_user500.csv",
+  "sequence_length": 5,
+  "total_rows": 6119,
+  "total_users": 500,
+  "total_sessions": 1189,
+  "total_samples": 4930,
+  "split_user_counts": {
+    "train": 350,
+    "val": 75,
+    "test": 75
+  },
+  "split_sample_counts": {
+    "test": 731,
+    "train": 3459,
+    "val": 740
+  },
+  "class_distribution": {
+    "add_to_cart": 944,
+    "login": 300,
+    "purchase": 745,
+    "remove_from_cart": 199,
+    "search": 1189,
+    "update_cart_quantity": 359,
+    "view_product": 1194
+  },
+  "split_class_distribution": {
+    "train": {
+      "add_to_cart": 664,
+      "login": 214,
+      "purchase": 508,
+      "remove_from_cart": 156,
+      "search": 835,
+      "update_cart_quantity": 253,
+      "view_product": 829
+    },
+    "val": {
+      "add_to_cart": 141,
+      "login": 44,
+      "purchase": 123,
+      "remove_from_cart": 18,
+      "search": 179,
+      "update_cart_quantity": 61,
+      "view_product": 174
+    },
+    "test": {
+      "add_to_cart": 139,
+      "login": 42,
+      "purchase": 114,
+      "remove_from_cart": 25,
+      "search": 175,
+      "update_cart_quantity": 45,
+      "view_product": 191
+    }
+  },
+  "num_classes": 8
+}

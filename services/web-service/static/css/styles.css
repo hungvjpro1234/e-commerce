@@ -178,6 +178,48 @@ textarea { min-height: 120px; resize: vertical; }
     margin-bottom: 14px;
 }
 .muted { color: var(--muted); }
+.recommendation-panel {
+    margin: 0 0 22px;
+    background: linear-gradient(180deg, #ffffff, #f7f9ff);
+}
+.recommendation-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+.recommendation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+}
+.recommendation-card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    background: #fff;
+}
+.recommendation-card h4 {
+    margin: 0 0 10px;
+}
+.recommendation-link {
+    padding: 8px 14px;
+    font-size: 0.88rem;
+}
+.recommendation-reasons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 12px 0;
+}
+.reason-pill {
+    font-size: 0.72rem;
+    color: #2447ad;
+    background: #e8eeff;
+    border-radius: 999px;
+    padding: 4px 8px;
+}
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -186,6 +228,7 @@ textarea { min-height: 120px; resize: vertical; }
 @media (max-width: 900px) {
     .two-col, .stats-grid, .form-grid { grid-template-columns: 1fr; }
     .nav-row { flex-direction: column; align-items: flex-start; }
+    .recommendation-header { flex-direction: column; }
 }
 
 /* ── Floating chat widget ─────────────────────────────────── */
@@ -364,6 +407,13 @@ textarea { min-height: 120px; resize: vertical; }
     text-align: center; padding: 20px 16px; color: var(--muted); font-size: 0.85rem;
 }
 .widget-empty-icon { font-size: 2rem; margin-bottom: 8px; }
+.chat-quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 12px 12px;
+    border-top: 1px solid var(--border);
+}
 
 /* ── Full-page chat ───────────────────────────────────────── */
 .chat-full-wrap {

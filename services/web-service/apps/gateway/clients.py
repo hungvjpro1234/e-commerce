@@ -78,7 +78,10 @@ class BaseGatewayClient:
     timeout = 10
 
     def _request(self, method, url, **kwargs):
-        response = requests.request(method, url, timeout=self.timeout, **kwargs)
+        try:
+            response = requests.request(method, url, timeout=self.timeout, **kwargs)
+        except requests.RequestException as exc:
+            raise ApiError("Service temporarily unavailable.") from exc
         if response.status_code >= 400:
             try:
                 payload = response.json()
@@ -179,3 +182,27 @@ class ProductGateway(BaseGatewayClient):
     def delete(self, domain, token, product_id):
         config = PRODUCT_SERVICES[domain]
         return self._request("delete", f"{config['base_url']}/api/{config['resource']}/{product_id}", headers={"Authorization": f"Bearer {token}"})
+
+
+class RecommendationGateway(BaseGatewayClient):
+    base_url = settings.RECOMMENDATION_SERVICE_URL
+
+    def predict_next_behavior(self, payload):
+        response = self._request("post", f"{self.base_url}/api/recommend/predict-next-behavior", json=payload)
+        return response.get("data", response)
+
+    def recommend_products(self, payload):
+        response = self._request("post", f"{self.base_url}/api/recommend/products", json=payload)
+        return response.get("data", response)
+
+
+class ChatbotGateway(BaseGatewayClient):
+    base_url = settings.CHATBOT_SERVICE_URL
+
+    def context(self, payload):
+        response = self._request("post", f"{self.base_url}/api/chat/context", json=payload)
+        return response.get("data", response)
+
+    def chat(self, payload):
+        response = self._request("post", f"{self.base_url}/api/chat", json=payload)
+        return response.get("data", response)

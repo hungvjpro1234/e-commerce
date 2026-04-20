@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -67,6 +68,8 @@ SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_NAME = "ecommerce_web_session"
 LOGIN_URL = "/staff/login"
 CUSTOMER_LOGIN_URL = "/login"
+INTERNAL_SERVICE_TOKEN = os.getenv("INTERNAL_SERVICE_TOKEN", "internal-local-service-token-2026")
+SERVICE_NAME = "web-service"
 
 STAFF_SERVICE_URL = "http://staff-service:8000"
 CUSTOMER_SERVICE_URL = "http://customer-service:8000"
@@ -80,3 +83,6 @@ BEAUTY_SERVICE_URL = "http://beauty-service:8000"
 FOOD_SERVICE_URL = "http://food-service:8000"
 SPORTS_SERVICE_URL = "http://sports-service:8000"
 GAMING_SERVICE_URL = "http://gaming-service:8000"
+BEHAVIOR_SERVICE_URL = "http://behavior-service:8000"
+RECOMMENDATION_SERVICE_URL = os.getenv("RECOMMENDATION_SERVICE_URL", "http://recommendation-service:8000")
+CHATBOT_SERVICE_URL = os.getenv("CHATBOT_SERVICE_URL", "http://chatbot-service:8000")

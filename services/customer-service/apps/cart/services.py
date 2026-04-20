@@ -1,11 +1,11 @@
 import uuid
 from decimal import Decimal
 
-import requests
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
+from apps.behavior_tracking import emit_behavior_event
 from apps.cart.models import Cart, CartItem, Order, OrderItem
 from shared.common.product_client import ProductServiceClient
 
@@ -17,27 +17,6 @@ class CheckoutError(Exception):
 class CartService:
     def __init__(self):
         self.client = ProductServiceClient(settings.INTERNAL_SERVICE_TOKEN)
-
-    def _track_behavior_event(self, *, customer, product_service, product_id, event_type, quantity, metadata=None):
-        try:
-            requests.post(
-                f"{settings.BEHAVIOR_SERVICE_URL}/api/internal/events",
-                json={
-                    "user_id": str(customer.id),
-                    "product_service": product_service,
-                    "product_id": str(product_id),
-                    "event_type": event_type,
-                    "quantity": quantity,
-                    "metadata": metadata or {},
-                },
-                headers={
-                    "X-Internal-Service-Token": settings.INTERNAL_SERVICE_TOKEN,
-                    "X-Service-Name": settings.SERVICE_NAME,
-                },
-                timeout=5,
-            ).raise_for_status()
-        except requests.RequestException:
-            return
 
     def get_or_create_active_cart(self, customer):
         cart, _ = Cart.objects.get_or_create(customer=customer, status=Cart.Status.ACTIVE)
@@ -77,11 +56,12 @@ class CartService:
                     "updated_at",
                 ]
             )
-        self._track_behavior_event(
-            customer=customer,
+        emit_behavior_event(
+            user_id=customer.id,
+            event_type="add_to_cart",
             product_service=product_service,
             product_id=product_id,
-            event_type="cart_add",
+            category=product_service,
             quantity=quantity,
             metadata={"source": "customer-service"},
         )
@@ -111,6 +91,15 @@ class CartService:
                 "updated_at",
             ]
         )
+        emit_behavior_event(
+            user_id=customer.id,
+            event_type="update_cart_quantity",
+            product_service=item.product_service,
+            product_id=item.product_id,
+            category=item.product_service,
+            quantity=quantity,
+            metadata={"source": "customer-service"},
+        )
         return self.get_or_create_active_cart(customer)
 
     def remove_item(self, customer, item_id):
@@ -118,6 +107,15 @@ class CartService:
         item = cart.items.filter(id=item_id).first()
         if not item:
             raise CheckoutError("Cart item not found.")
+        emit_behavior_event(
+            user_id=customer.id,
+            event_type="remove_from_cart",
+            product_service=item.product_service,
+            product_id=item.product_id,
+            category=item.product_service,
+            quantity=item.quantity,
+            metadata={"source": "customer-service"},
+        )
         item.delete()
         return self.get_or_create_active_cart(customer)
 
@@ -176,11 +174,12 @@ class CartService:
             cart.save(update_fields=["status", "checked_out_at", "updated_at"])
             cart.items.all().delete()
         for item, _product in validated_items:
-            self._track_behavior_event(
-                customer=customer,
+            emit_behavior_event(
+                user_id=customer.id,
+                event_type="purchase",
                 product_service=item.product_service,
                 product_id=item.product_id,
-                event_type="purchase",
+                category=item.product_service,
                 quantity=item.quantity,
                 metadata={"order_id": str(order.id), "payment_reference": order.payment_reference},
             )

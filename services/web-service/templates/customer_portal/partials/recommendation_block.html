@@ -1,0 +1,32 @@
+{% if recommendations and recommendations.products %}
+<section class="panel recommendation-panel">
+  <div class="recommendation-header">
+    <div>
+      <div class="card-meta">AI Recommendations</div>
+      <h3>{{ title|default:"Recommended for you" }}</h3>
+      <p class="muted">{{ subtitle|default:"A few picks based on your recent shopping behavior." }}</p>
+    </div>
+    {% if recommendations.predicted_behavior %}
+      <span class="badge">Next: {{ recommendations.predicted_behavior|cut:"_"|title }}</span>
+    {% endif %}
+  </div>
+  <div class="recommendation-grid">
+    {% for product in recommendations.products %}
+      <article class="recommendation-card">
+        <div class="card-meta">{{ product.domain_label }}</div>
+        <h4>{{ product.name }}</h4>
+        <p class="muted">{{ product.description|default:""|truncatechars:90 }}</p>
+        <div class="recommendation-reasons">
+          {% for reason in product.reason_codes %}
+            <span class="reason-pill">{{ reason|cut:"_"|title }}</span>
+          {% endfor %}
+        </div>
+        <div class="card-footer">
+          <strong>${{ product.price }}</strong>
+          <a href="/products/{{ product.domain }}/{{ product.id }}" class="button recommendation-link">View</a>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

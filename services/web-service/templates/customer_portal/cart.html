@@ -2,6 +2,7 @@
 {% block title %}Cart | E-Commerce{% endblock %}
 {% block content %}
 <h2>Shopping Cart</h2>
+{% include 'customer_portal/partials/recommendation_block.html' with title='You may also like' subtitle='Suggested additions based on what is already in your cart.' %}
 {% if cart.items %}
   <div class="two-col">
     <div class="panel">

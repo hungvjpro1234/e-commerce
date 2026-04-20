@@ -1,0 +1,58 @@
+{
+  "behavior_to_id": {
+    "<PAD>": 0,
+    "register": 1,
+    "login": 2,
+    "search": 3,
+    "view_product": 4,
+    "add_to_cart": 5,
+    "update_cart_quantity": 6,
+    "purchase": 7,
+    "remove_from_cart": 8
+  },
+  "label_to_id": {
+    "<PAD>": 0,
+    "register": 1,
+    "login": 2,
+    "search": 3,
+    "view_product": 4,
+    "add_to_cart": 5,
+    "update_cart_quantity": 6,
+    "remove_from_cart": 7,
+    "purchase": 8
+  },
+  "category_to_id": {
+    "<PAD>": 0,
+    "<UNK>": 1,
+    "Food & Drinks": 2,
+    "Home Appliances": 3,
+    "Laptop": 4,
+    "Sports": 5,
+    "Gaming": 6,
+    "Cloth": 7,
+    "Mobile": 8,
+    "Tech Accessories": 9,
+    "Beauty": 10,
+    "Books": 11
+  },
+  "product_service_to_id": {
+    "<PAD>": 0,
+    "<UNK>": 1,
+    "food": 2,
+    "home-appliance": 3,
+    "laptop": 4,
+    "sports": 5,
+    "gaming": 6,
+    "cloth": 7,
+    "mobile": 8,
+    "accessory": 9,
+    "beauty": 10,
+    "book": 11
+  },
+  "source_service_to_id": {
+    "<PAD>": 0,
+    "<UNK>": 1,
+    "customer-service": 2,
+    "web-service": 3
+  }
+}
