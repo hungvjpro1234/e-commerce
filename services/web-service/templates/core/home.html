@@ -14,26 +14,7 @@
     </div>
 </section>
 
-<section>
-    {% if recommended_products %}
-    <div class="section-title-row">
-        <h2>Recommended For You</h2>
-        <a href="/products">Browse more</a>
-    </div>
-    <div class="card-grid" style="margin-bottom:24px;">
-        {% for product in recommended_products %}
-            <article class="card">
-                <div class="card-meta">{{ product.domain_label }}</div>
-                <h3>{{ product.name }}</h3>
-                <p>{{ product.description|default:'No description yet.'|truncatechars:80 }}</p>
-                <div class="card-footer">
-                    <strong>${{ product.price }}</strong>
-                    <a href="/products/{{ product.domain }}/{{ product.id }}">Details</a>
-                </div>
-            </article>
-        {% endfor %}
-    </div>
-    {% endif %}
+
 
 <section>
     <div class="section-title-row">

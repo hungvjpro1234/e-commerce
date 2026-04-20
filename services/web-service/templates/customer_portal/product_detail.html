@@ -49,32 +49,5 @@
     </div>
   </div>
 </div>
-{% if recommended_products %}
-<section style="margin-top:28px;">
-  <div class="section-title-row">
-    <h2>Related Products</h2>
-    <a href="/products?domain={{ domain }}">More in {{ product.domain_label }}</a>
-  </div>
-  <div class="card-grid">
-    {% for item in recommended_products %}
-      <article class="card">
-        <div class="card-meta">{{ item.domain_label }}</div>
-        <h3>{{ item.name }}</h3>
-        <p>{{ item.description|default:'No description yet.'|truncatechars:90 }}</p>
-        <div class="card-footer">
-          <strong>${{ item.price }}</strong>
-          <a href="/products/{{ item.domain }}/{{ item.id }}">Details</a>
-        </div>
-      </article>
-    {% endfor %}
-  </div>
-</section>
-{% endif %}
-<script>
-window.__CHAT_CONTEXT__ = {
-  domain: "{{ domain|escapejs }}",
-  page_context: "product_detail",
-  product_id: "{{ product.id|escapejs }}",
-};
-</script>
+
 {% endblock %}

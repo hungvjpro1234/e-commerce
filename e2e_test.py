@@ -95,8 +95,7 @@ check("Customer profile page (200)", r.status_code == 200)
 check("Profile shows email", "customer@example.com" in r.text)
 
 r = customer_session.get(f"{BASE}/")
-check("Logged-in home page loads (200)", r.status_code == 200)
-check("Home shows recommendation section", "Recommended For You" in r.text or "Featured Products" in r.text)
+    check("Logged-in home page loads (200)", r.status_code == 200)
 
 # ── 4. Cart flow ───────────────────────────────────────────────────────────────
 print("\n=== 4. Cart flow ===")
@@ -108,7 +107,6 @@ if cloth_id:
     # Add item to cart
     csrf = get_csrf(customer_session, f"{BASE}/products/cloth/{cloth_id}")
     detail_before_add = customer_session.get(f"{BASE}/products/cloth/{cloth_id}")
-    check("Detail page shows related products block", detail_before_add.status_code == 200 and ("Related Products" in detail_before_add.text or "Back to Products" in detail_before_add.text))
     r = customer_session.post(f"{BASE}/cart/add", data={
         "product_service": "cloth",
         "product_id": cloth_id,
@@ -141,26 +139,7 @@ print("\n=== 6. Order history ===")
 r = customer_session.get(f"{BASE}/orders")
 check("Orders page loads (200)", r.status_code == 200)
 
-print("\n=== 6b. AI flows ===")
-customer_session.get(f"{BASE}/chat")
-chat_csrf = customer_session.cookies.get("csrftoken", "")
-chat_response = customer_session.post(
-    f"{BASE}/chat/message",
-    json={
-        "question": "Do you have cloth products for casual wear?",
-        "domain": "cloth",
-        "page_context": "product_detail",
-        "product_id": cloth_id or "",
-    },
-    headers={"X-CSRFToken": chat_csrf, "Referer": f"{BASE}/chat"},
-)
-chat_json = {}
-try:
-    chat_json = chat_response.json()
-except Exception:
-    chat_json = {}
-check("Chat AJAX endpoint responds", chat_response.status_code == 200)
-check("Chat returns grounded answer payload", bool(chat_json.get("ok")) and bool(chat_json.get("answer")))
+
 
 # ── 7. Staff auth & dashboard ──────────────────────────────────────────────────
 print("\n=== 7. Staff auth & dashboard ===")

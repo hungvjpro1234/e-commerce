@@ -16,7 +16,4 @@ urlpatterns = [
     path("checkout", views.CheckoutView.as_view(), name="checkout"),
     path("orders", views.OrderListView.as_view(), name="orders"),
     path("orders/<str:order_id>", views.OrderDetailView.as_view(), name="order_detail"),
-    path("chat", views.ChatView.as_view(), name="chat"),
-    path("chat/clear", views.ChatClearView.as_view(), name="chat_clear"),
-    path("chat/message", views.ChatMessageView.as_view(), name="chat_message"),
 ]

@@ -141,66 +141,6 @@ class StaffGateway(BaseGatewayClient):
         return self._request("get", f"{self.base_url}/api/staff/profile", headers={"Authorization": f"Bearer {token}"})
 
 
-class ChatbotGateway(BaseGatewayClient):
-    base_url = settings.CHATBOT_SERVICE_URL
-    # LLM + retries có thể > 10s; mặc định BaseGatewayClient.timeout = 10 gây timeout → HTML 500 → UI báo "Network error"
-    timeout = 120
-
-    def chat(
-        self,
-        token,
-        question,
-        conversation_id=None,
-        domain="",
-        page_context="",
-        product_id="",
-    ):
-        payload = {"question": question}
-        if conversation_id:
-            payload["conversation_id"] = conversation_id
-        if domain:
-            payload["domain"] = domain
-        if page_context:
-            payload["page_context"] = page_context
-        if product_id:
-            payload["product_id"] = product_id
-        return self._request(
-            "post",
-            f"{self.base_url}/api/chat",
-            json=payload,
-            headers={"Authorization": f"Bearer {token}"},
-        )
-
-
-class BehaviorGateway(BaseGatewayClient):
-    base_url = settings.BEHAVIOR_SERVICE_URL
-
-    def track_event(self, token, payload):
-        return self._request(
-            "post",
-            f"{self.base_url}/api/events",
-            json=payload,
-            headers={"Authorization": f"Bearer {token}"},
-        )
-
-
-class RecommendationGateway(BaseGatewayClient):
-    base_url = settings.RECOMMENDATION_SERVICE_URL
-
-    def recommendations(self, token, *, limit=6, domain="", product_id=""):
-        params = {"limit": limit}
-        if domain:
-            params["domain"] = domain
-        if product_id:
-            params["product_id"] = product_id
-        return self._request(
-            "get",
-            f"{self.base_url}/api/recommendations/me",
-            params=params,
-            headers={"Authorization": f"Bearer {token}"},
-        )
-
-
 class ProductGateway(BaseGatewayClient):
     def list_all(self):
         products = []

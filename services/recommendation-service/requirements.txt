@@ -1,7 +1,0 @@
-Django>=5.1,<5.2
-djangorestframework>=3.15,<3.16
-psycopg2-binary>=2.9,<3.0
-PyJWT>=2.9,<3.0
-requests>=2.32,<3.0
---extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.7.1+cpu

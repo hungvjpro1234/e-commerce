@@ -8,18 +8,13 @@ from django.views import View
 
 from apps.gateway.clients import (
     ApiError,
-    BehaviorGateway,
-    ChatbotGateway,
     CustomerGateway,
     ProductGateway,
-    RecommendationGateway,
 )
 
 customer_gw = CustomerGateway()
 product_gw = ProductGateway()
-chatbot_gw = ChatbotGateway()
-behavior_gw = BehaviorGateway()
-recommendation_gw = RecommendationGateway()
+
 
 DOMAIN_LABELS = {
     "cloth": "Cloth",
@@ -211,33 +206,10 @@ class ProductDetailView(View):
         except ApiError as exc:
             messages.error(request, str(exc))
             return redirect("/products")
-        recommended_products = []
-        token = request.session.get("customer_access_token")
-        if token:
-            try:
-                behavior_gw.track_event(token, {
-                    "event_type": "product_view",
-                    "product_service": domain,
-                    "product_id": product_id,
-                    "page_context": "product_detail",
-                })
-            except ApiError:
-                pass
-            try:
-                recommendation_resp = recommendation_gw.recommendations(
-                    token,
-                    limit=4,
-                    domain=domain,
-                    product_id=product_id,
-                )
-                recommended_products = recommendation_resp.get("data", {}).get("items", [])
-            except ApiError:
-                recommended_products = []
         return render(request, "customer_portal/product_detail.html", {
             "product": product,
             "domain": domain,
             "detail_fields": PRODUCT_DETAIL_FIELDS.get(domain, []),
-            "recommended_products": recommended_products,
         })
 
 
@@ -355,76 +327,3 @@ class OrderDetailView(View):
         return render(request, "customer_portal/order_detail.html", {"order": order})
 
 
-class ChatView(View):
-    @require_customer
-    def get(self, request):
-        return render(request, "customer_portal/chat.html", {
-            "chat_context": {
-                "domain": "",
-                "page_context": "chat_page",
-                "product_id": "",
-            }
-        })
-
-
-class ChatClearView(View):
-    @require_customer
-    def post(self, request):
-        request.session.pop("chatbot_conversation_id", None)
-        request.session.pop("chatbot_history", None)
-        return redirect("/chat")
-
-
-class ChatMessageView(View):
-    """AJAX endpoint — returns JSON, no redirect. Used by the chat widget and full-page AJAX."""
-
-    def post(self, request):
-        if not request.session.get("customer_access_token"):
-            return JsonResponse({"ok": False, "error": "Please log in to use the chatbot."}, status=401)
-
-        try:
-            body = json.loads(request.body)
-        except (json.JSONDecodeError, ValueError):
-            body = {}
-
-        question = (body.get("question") or "").strip()
-        if not question:
-            return JsonResponse({"ok": False, "error": "Question cannot be empty."}, status=400)
-
-        token = request.session["customer_access_token"]
-        conversation_id = body.get("conversation_id") or request.session.get("chatbot_conversation_id")
-        domain = (body.get("domain") or "").strip()
-        page_context = (body.get("page_context") or "").strip()
-        product_id = (body.get("product_id") or "").strip()
-
-        try:
-            resp = chatbot_gw.chat(
-                token,
-                question,
-                conversation_id,
-                domain=domain,
-                page_context=page_context,
-                product_id=product_id,
-            )
-            data = resp.get("data", {})
-            new_conv_id = data.get("conversation_id")
-            request.session["chatbot_conversation_id"] = new_conv_id
-            return JsonResponse({
-                "ok": True,
-                "answer": data.get("answer", ""),
-                "conversation_id": new_conv_id,
-                "citations": data.get("citations", []),
-            })
-        except ApiError as exc:
-            return JsonResponse({"ok": False, "error": str(exc)}, status=502)
-        except requests.RequestException:
-            return JsonResponse(
-                {
-                    "ok": False,
-                    "error": (
-                        "Không kết nối được tới dịch vụ chat (timeout hoặc mạng). "
-                        "Thử lại sau vài giây."
-                    ),
-                },
-                status=502,
-            )

@@ -17,7 +17,6 @@ e-commerce backend for a student-friendly but production-inspired architecture.
 - `food-service`: food and drinks catalog and stock
 - `sports-service`: sports catalog and stock
 - `gaming-service`: gaming catalog and stock
-- `chatbot-service`: RAG-based AI shopping assistant with OpenAI backend
 
 ## Architecture Summary
 
@@ -34,23 +33,14 @@ for the API contracts.
 
 1. Copy `.env.example` to `.env`.
 2. Review ports and database credentials.
-3. Add your `OPENAI_API_KEY` to `.env` (required for the chatbot).
-4. Build and start the stack with Docker Compose.
-5. Run migrations inside each service container.
+3. Build and start the stack with Docker Compose.
+4. Run migrations inside each service container.
 
 ```bash
 docker compose up --build
 ```
 
-After the stack is running, migrate and seed the chatbot knowledge base:
 
-```bash
-docker compose exec chatbot-service python manage.py migrate
-docker compose exec chatbot-service python manage.py seed_kb
-docker compose exec chatbot-service python manage.py sync_kb
-```
-
-The chatbot is accessible at `/chat` in the web UI (customer login required).
 
 ## Repository Layout
 
@@ -59,8 +49,7 @@ The chatbot is accessible at `/chat` in the web UI (customer login required).
 |-- docker-compose.yml
 |-- docs/
 |   |-- architecture.md
-|   |-- api-contracts.md
-|   `-- chatbot-architecture.md   (AI extension design)
+|   `-- api-contracts.md
 |-- shared/
 |-- services/
 |   |-- staff-service/
@@ -74,7 +63,6 @@ The chatbot is accessible at `/chat` in the web UI (customer login required).
 |   |-- beauty-service/
 |   |-- food-service/
 |   |-- sports-service/
-|   |-- gaming-service/
-|   `-- chatbot-service/          (RAG chatbot)
+|   `-- gaming-service/
 `-- tests/
 ```
