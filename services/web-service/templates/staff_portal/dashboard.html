@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load dict_filters %}
+{% block title %}Staff Dashboard | E-Commerce{% endblock %}
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+  <h2>Staff Dashboard</h2>
+  <span class="badge badge-dark">{{ staff.full_name }} &bull; {{ staff.role }}</span>
+</div>
+<div class="stats-grid" style="margin-bottom:28px;">
+  {% for domain in domain_order %}
+    <div class="stats-card" style="text-align:center;">
+      <div style="font-size:2.5rem;font-weight:700;color:var(--primary);">{{ counts|dict_value:domain }}</div>
+      <div class="muted">{{ domain_labels|dict_value:domain }} Products</div>
+      <a class="button" href="/staff/products/{{ domain }}" style="display:block;margin-top:12px;">Manage</a>
+    </div>
+  {% endfor %}
+</div>
+<div class="panel">
+  <h3>Quick Actions</h3>
+  <div class="inline-actions">
+    {% for domain in domain_order %}
+      <a class="button" href="/staff/products/{{ domain }}/new">+ New {{ domain_labels|dict_value:domain }}</a>
+    {% endfor %}
+    <a class="button secondary" href="/products">View Storefront</a>
+  </div>
+</div>
+{% endblock %}

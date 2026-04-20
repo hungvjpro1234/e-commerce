@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Orders | E-Commerce{% endblock %}
+{% block content %}
+<h2>My Orders</h2>
+{% if orders %}
+  <div class="panel">
+    <table class="table">
+      <thead><tr><th>Reference</th><th>Date</th><th>Total</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+      {% for order in orders %}
+        <tr>
+          <td>{{ order.payment_reference }}</td>
+          <td>{{ order.created_at|slice:":10" }}</td>
+          <td><strong>${{ order.total_amount }}</strong></td>
+          <td>{{ order.status|capfirst }}</td>
+          <td><a href="/orders/{{ order.id }}">View</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="panel" style="text-align:center;padding:40px;">
+    <p>No orders yet.</p>
+    <a class="button" href="/products">Browse Products</a>
+  </div>
+{% endif %}
+{% endblock %}

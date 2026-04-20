@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load dict_filters %}
+{% block title %}{{ domain_label }} Products | Staff{% endblock %}
+{% block content %}
+<div class="section-title-row">
+  <h2>{{ domain_label }} Products</h2>
+  <a class="button" href="/staff/products/{{ domain }}/new">+ New Product</a>
+</div>
+<nav style="margin-bottom:16px;">
+  {% for nav_domain in domain_order %}
+    <a href="/staff/products/{{ nav_domain }}" style="{% if domain == nav_domain %}font-weight:700;{% endif %}">{{ domain_labels|dict_value:nav_domain }}</a>{% if not forloop.last %} | {% endif %}
+  {% endfor %}
+</nav>
+<div class="panel">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+        <tr>
+          <td>{{ product.name }}</td>
+          <td>${{ product.price }}</td>
+          <td>{{ product.stock }}</td>
+          <td>{% if product.is_active %}<span style="color:green;">Active</span>{% else %}<span style="color:red;">Inactive</span>{% endif %}</td>
+          <td>
+            <div class="inline-actions">
+              <a href="/staff/products/{{ domain }}/{{ product.id }}/edit">Edit</a>
+              <form method="post" action="/staff/products/{{ domain }}/{{ product.id }}/delete" onsubmit="return confirm('Deactivate this product?')">
+                {% csrf_token %}
+                <button type="submit" style="background:none;border:none;color:red;cursor:pointer;">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" style="text-align:center;color:var(--muted);">No products yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

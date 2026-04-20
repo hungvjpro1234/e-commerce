@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Cart | E-Commerce{% endblock %}
+{% block content %}
+<h2>Shopping Cart</h2>
+{% if cart.items %}
+  <div class="two-col">
+    <div class="panel">
+      {% for item in cart.items %}
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-weight:600;">{{ item.product_name_snapshot }}</div>
+            <div class="muted">{{ item.product_service|capfirst }} &bull; ${{ item.unit_price_snapshot }} each</div>
+          </div>
+          <div class="inline-actions">
+            <form method="post" action="/cart/update/{{ item.id }}">
+              {% csrf_token %}
+              <input type="number" name="quantity" value="{{ item.quantity }}" min="1" style="width:70px;padding:8px;border-radius:8px;border:1px solid var(--border);">
+              <button class="button" type="submit" style="padding:8px 12px;">Update</button>
+            </form>
+            <form method="post" action="/cart/remove/{{ item.id }}">
+              {% csrf_token %}
+              <button type="submit" style="background:none;border:none;color:red;cursor:pointer;">Remove</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+      <form method="post" action="/cart/clear" style="margin-top:14px;">
+        {% csrf_token %}
+        <button type="submit" style="background:none;border:none;color:var(--muted);cursor:pointer;">Clear all items</button>
+      </form>
+    </div>
+    <div class="sidebar-col">
+      <div class="panel">
+        <h3>Order Summary</h3>
+        <div style="display:flex;justify-content:space-between;font-size:1.1rem;">
+          <span>Total</span><strong>${{ cart.total_amount }}</strong>
+        </div>
+        <a class="button" href="/checkout" style="display:block;text-align:center;margin-top:14px;">Proceed to Checkout</a>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="panel" style="text-align:center;padding:40px;">
+    <p>Your cart is empty.</p>
+    <a class="button" href="/products">Browse Products</a>
+  </div>
+{% endif %}
+{% endblock %}

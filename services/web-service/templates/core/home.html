@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | E-Commerce{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div>
+        <h1>Microservice E-Commerce Demo</h1>
+        <p>Browse products, test cart and checkout flows, or log in as staff to manage catalog data.</p>
+        <div class="hero-actions">
+            <a class="button" href="/products">Browse Products</a>
+            <a class="button secondary" href="/staff/login">Staff Dashboard</a>
+        </div>
+    </div>
+</section>
+
+<section>
+    {% if recommended_products %}
+    <div class="section-title-row">
+        <h2>Recommended For You</h2>
+        <a href="/products">Browse more</a>
+    </div>
+    <div class="card-grid" style="margin-bottom:24px;">
+        {% for product in recommended_products %}
+            <article class="card">
+                <div class="card-meta">{{ product.domain_label }}</div>
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description|default:'No description yet.'|truncatechars:80 }}</p>
+                <div class="card-footer">
+                    <strong>${{ product.price }}</strong>
+                    <a href="/products/{{ product.domain }}/{{ product.id }}">Details</a>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+<section>
+    <div class="section-title-row">
+        <h2>Featured Products</h2>
+        <a href="/products">View all</a>
+    </div>
+    <div class="card-grid">
+        {% for product in featured_products %}
+            <article class="card">
+                <div class="card-meta">{{ product.domain_label }}</div>
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description|default:'No description yet.'|truncatechars:80 }}</p>
+                <div class="card-footer">
+                    <strong>${{ product.price }}</strong>
+                    <a href="/products/{{ product.domain }}/{{ product.id }}">Details</a>
+                </div>
+            </article>
+        {% empty %}
+            <p>No products available yet.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

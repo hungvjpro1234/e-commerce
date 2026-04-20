@@ -1,0 +1,437 @@
+version: "3.9"
+
+x-app-base: &app-base
+  env_file:
+    - .env
+  environment:
+    DJANGO_SETTINGS_MODULE: config.settings.local
+    PYTHONUNBUFFERED: "1"
+  restart: unless-stopped
+
+services:
+  web-service:
+    env_file:
+      - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.local
+      PYTHONUNBUFFERED: "1"
+    build:
+      context: ./services/web-service
+    container_name: web-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/web-service:/app
+    ports:
+      - "${WEB_SERVICE_PORT:-8000}:8000"
+    depends_on:
+      - staff-service
+      - customer-service
+      - behavior-service
+      - recommendation-service
+      - cloth-service
+      - laptop-service
+      - mobile-service
+      - accessory-service
+      - home-appliance-service
+      - book-service
+      - beauty-service
+      - food-service
+      - sports-service
+      - gaming-service
+      - chatbot-service
+    restart: unless-stopped
+
+  staff-service:
+    <<: *app-base
+    build:
+      context: ./services/staff-service
+    container_name: staff-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/staff-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${STAFF_SERVICE_PORT:-8001}:8000"
+    depends_on:
+      - staff-db
+
+  customer-service:
+    <<: *app-base
+    build:
+      context: ./services/customer-service
+    container_name: customer-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/customer-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${CUSTOMER_SERVICE_PORT:-8002}:8000"
+    depends_on:
+      - customer-db
+
+  cloth-service:
+    <<: *app-base
+    build:
+      context: ./services/cloth-service
+    container_name: cloth-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/cloth-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${CLOTH_SERVICE_PORT:-8003}:8000"
+    depends_on:
+      - cloth-db
+
+  laptop-service:
+    <<: *app-base
+    build:
+      context: ./services/laptop-service
+    container_name: laptop-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/laptop-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${LAPTOP_SERVICE_PORT:-8004}:8000"
+    depends_on:
+      - laptop-db
+
+  mobile-service:
+    <<: *app-base
+    build:
+      context: ./services/mobile-service
+    container_name: mobile-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/mobile-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${MOBILE_SERVICE_PORT:-8005}:8000"
+    depends_on:
+      - mobile-db
+
+  accessory-service:
+    <<: *app-base
+    build:
+      context: ./services/accessory-service
+    container_name: accessory-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/accessory-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${ACCESSORY_SERVICE_PORT:-8007}:8000"
+    depends_on:
+      - accessory-db
+
+  home-appliance-service:
+    <<: *app-base
+    build:
+      context: ./services/home-appliance-service
+    container_name: home-appliance-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/home-appliance-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${HOME_APPLIANCE_SERVICE_PORT:-8008}:8000"
+    depends_on:
+      - home-appliance-db
+
+  book-service:
+    <<: *app-base
+    build:
+      context: ./services/book-service
+    container_name: book-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/book-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${BOOK_SERVICE_PORT:-8009}:8000"
+    depends_on:
+      - book-db
+
+  beauty-service:
+    <<: *app-base
+    build:
+      context: ./services/beauty-service
+    container_name: beauty-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/beauty-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${BEAUTY_SERVICE_PORT:-8010}:8000"
+    depends_on:
+      - beauty-db
+
+  food-service:
+    <<: *app-base
+    build:
+      context: ./services/food-service
+    container_name: food-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/food-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${FOOD_SERVICE_PORT:-8011}:8000"
+    depends_on:
+      - food-db
+
+  sports-service:
+    <<: *app-base
+    build:
+      context: ./services/sports-service
+    container_name: sports-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/sports-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${SPORTS_SERVICE_PORT:-8012}:8000"
+    depends_on:
+      - sports-db
+
+  gaming-service:
+    <<: *app-base
+    build:
+      context: ./services/gaming-service
+    container_name: gaming-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/gaming-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${GAMING_SERVICE_PORT:-8013}:8000"
+    depends_on:
+      - gaming-db
+
+  chatbot-service:
+    <<: *app-base
+    build:
+      context: ./services/chatbot-service
+    container_name: chatbot-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/chatbot-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${CHATBOT_SERVICE_PORT:-8006}:8000"
+    depends_on:
+      - chatbot-db
+
+  behavior-service:
+    <<: *app-base
+    build:
+      context: ./services/behavior-service
+    container_name: behavior-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/behavior-service:/app
+      - ./shared:/app/shared
+    ports:
+      - "${BEHAVIOR_SERVICE_PORT:-8014}:8000"
+    depends_on:
+      - behavior-db
+
+  recommendation-service:
+    <<: *app-base
+    build:
+      context: ./services/recommendation-service
+    container_name: recommendation-service
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./services/recommendation-service:/app
+      - ./shared:/app/shared
+      - recommendation_artifacts:/app/artifacts
+    ports:
+      - "${RECOMMENDATION_SERVICE_PORT:-8015}:8000"
+    depends_on:
+      - recommendation-db
+      - behavior-service
+
+  chatbot-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${CHATBOT_DB_NAME}
+      POSTGRES_USER: ${CHATBOT_DB_USER}
+      POSTGRES_PASSWORD: ${CHATBOT_DB_PASSWORD}
+    ports:
+      - "5438:5432"
+    volumes:
+      - chatbot_db_data:/var/lib/postgresql/data
+
+  staff-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${STAFF_DB_NAME}
+      POSTGRES_USER: ${STAFF_DB_USER}
+      POSTGRES_PASSWORD: ${STAFF_DB_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - staff_db_data:/var/lib/postgresql/data
+
+  customer-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${CUSTOMER_DB_NAME}
+      POSTGRES_USER: ${CUSTOMER_DB_USER}
+      POSTGRES_PASSWORD: ${CUSTOMER_DB_PASSWORD}
+    ports:
+      - "5434:5432"
+    volumes:
+      - customer_db_data:/var/lib/postgresql/data
+
+  cloth-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${CLOTH_DB_NAME}
+      POSTGRES_USER: ${CLOTH_DB_USER}
+      POSTGRES_PASSWORD: ${CLOTH_DB_PASSWORD}
+    ports:
+      - "5435:5432"
+    volumes:
+      - cloth_db_data:/var/lib/postgresql/data
+
+  laptop-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${LAPTOP_DB_NAME}
+      POSTGRES_USER: ${LAPTOP_DB_USER}
+      POSTGRES_PASSWORD: ${LAPTOP_DB_PASSWORD}
+    ports:
+      - "5436:5432"
+    volumes:
+      - laptop_db_data:/var/lib/postgresql/data
+
+  mobile-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${MOBILE_DB_NAME}
+      POSTGRES_USER: ${MOBILE_DB_USER}
+      POSTGRES_PASSWORD: ${MOBILE_DB_PASSWORD}
+    ports:
+      - "5437:5432"
+    volumes:
+      - mobile_db_data:/var/lib/postgresql/data
+
+  accessory-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${ACCESSORY_DB_NAME}
+      POSTGRES_USER: ${ACCESSORY_DB_USER}
+      POSTGRES_PASSWORD: ${ACCESSORY_DB_PASSWORD}
+    ports:
+      - "5439:5432"
+    volumes:
+      - accessory_db_data:/var/lib/postgresql/data
+
+  home-appliance-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${HOME_APPLIANCE_DB_NAME}
+      POSTGRES_USER: ${HOME_APPLIANCE_DB_USER}
+      POSTGRES_PASSWORD: ${HOME_APPLIANCE_DB_PASSWORD}
+    ports:
+      - "5440:5432"
+    volumes:
+      - home_appliance_db_data:/var/lib/postgresql/data
+
+  book-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${BOOK_DB_NAME}
+      POSTGRES_USER: ${BOOK_DB_USER}
+      POSTGRES_PASSWORD: ${BOOK_DB_PASSWORD}
+    ports:
+      - "5441:5432"
+    volumes:
+      - book_db_data:/var/lib/postgresql/data
+
+  beauty-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${BEAUTY_DB_NAME}
+      POSTGRES_USER: ${BEAUTY_DB_USER}
+      POSTGRES_PASSWORD: ${BEAUTY_DB_PASSWORD}
+    ports:
+      - "5442:5432"
+    volumes:
+      - beauty_db_data:/var/lib/postgresql/data
+
+  food-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${FOOD_DB_NAME}
+      POSTGRES_USER: ${FOOD_DB_USER}
+      POSTGRES_PASSWORD: ${FOOD_DB_PASSWORD}
+    ports:
+      - "5443:5432"
+    volumes:
+      - food_db_data:/var/lib/postgresql/data
+
+  sports-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${SPORTS_DB_NAME}
+      POSTGRES_USER: ${SPORTS_DB_USER}
+      POSTGRES_PASSWORD: ${SPORTS_DB_PASSWORD}
+    ports:
+      - "5444:5432"
+    volumes:
+      - sports_db_data:/var/lib/postgresql/data
+
+  gaming-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${GAMING_DB_NAME}
+      POSTGRES_USER: ${GAMING_DB_USER}
+      POSTGRES_PASSWORD: ${GAMING_DB_PASSWORD}
+    ports:
+      - "5445:5432"
+    volumes:
+      - gaming_db_data:/var/lib/postgresql/data
+
+  behavior-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${BEHAVIOR_DB_NAME}
+      POSTGRES_USER: ${BEHAVIOR_DB_USER}
+      POSTGRES_PASSWORD: ${BEHAVIOR_DB_PASSWORD}
+    ports:
+      - "5446:5432"
+    volumes:
+      - behavior_db_data:/var/lib/postgresql/data
+
+  recommendation-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${RECOMMENDATION_DB_NAME}
+      POSTGRES_USER: ${RECOMMENDATION_DB_USER}
+      POSTGRES_PASSWORD: ${RECOMMENDATION_DB_PASSWORD}
+    ports:
+      - "5447:5432"
+    volumes:
+      - recommendation_db_data:/var/lib/postgresql/data
+
+volumes:
+  staff_db_data:
+  customer_db_data:
+  cloth_db_data:
+  laptop_db_data:
+  mobile_db_data:
+  accessory_db_data:
+  home_appliance_db_data:
+  book_db_data:
+  beauty_db_data:
+  food_db_data:
+  sports_db_data:
+  gaming_db_data:
+  chatbot_db_data:
+  behavior_db_data:
+  recommendation_db_data:
+  recommendation_artifacts:

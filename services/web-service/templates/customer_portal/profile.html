@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Profile | E-Commerce{% endblock %}
+{% block content %}
+<div class="panel" style="max-width:600px;margin:auto;">
+  <h2>My Profile</h2>
+  <table class="table">
+    <tr><th>Email</th><td>{{ profile.email }}</td></tr>
+    <tr><th>Full Name</th><td>{{ profile.full_name }}</td></tr>
+    <tr><th>Role</th><td>{{ profile.role }}</td></tr>
+  </table>
+  <div class="inline-actions" style="margin-top:16px">
+    <a class="button" href="/orders">My Orders</a>
+    <a class="button secondary" href="/cart">Cart</a>
+    <a href="/logout" style="color:red">Logout</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Checkout | E-Commerce{% endblock %}
+{% block content %}
+<h2>Checkout</h2>
+<div class="two-col">
+  <div class="panel">
+    <h3>Order Items</h3>
+    {% for item in cart.items %}
+      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-weight:600;">{{ item.product_name_snapshot }}</div>
+          <div class="muted">x{{ item.quantity }} &bull; {{ item.product_service|capfirst }}</div>
+        </div>
+        <strong>${{ item.unit_price_snapshot }}</strong>
+      </div>
+    {% endfor %}
+    <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:1.1rem;">
+      <span>Total</span><strong>${{ cart.total_amount }}</strong>
+    </div>
+  </div>
+  <div class="sidebar-col">
+    <div class="panel">
+      <h3>Payment</h3>
+      <p class="muted">Payment is simulated — no real card needed for this demo.</p>
+      <form method="post" action="/checkout">
+        {% csrf_token %}
+        <button class="button" type="submit" style="width:100%;">Pay Now (Demo)</button>
+      </form>
+      <a href="/cart" style="display:block;text-align:center;margin-top:10px;color:var(--muted);">← Back to Cart</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

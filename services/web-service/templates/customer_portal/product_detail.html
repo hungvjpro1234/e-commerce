@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load dict_filters %}
+{% block title %}{{ product.name }} | E-Commerce{% endblock %}
+{% block content %}
+<div class="two-col">
+  <div class="panel">
+    {% if product.image_url %}
+      <img src="{{ product.image_url }}" alt="{{ product.name }}" style="width:100%;max-height:400px;object-fit:cover;border-radius:14px;margin-bottom:20px;">
+    {% endif %}
+    <div class="card-meta">{{ product.domain_label }}</div>
+    <h2>{{ product.name }}</h2>
+    <p>{{ product.description|default:'No description.' }}</p>
+    <table class="table" style="margin-top:16px;">
+      <tr><th>Price</th><td><strong>${{ product.price }}</strong></td></tr>
+      <tr><th>Stock</th><td>{{ product.stock }}</td></tr>
+      {% for field in detail_fields %}
+        {% with value=product|dict_value:field.name %}
+          {% if value %}
+            <tr>
+              <th>{{ field.label }}</th>
+              <td>{{ value }}{{ field.suffix|default:'' }}</td>
+            </tr>
+          {% endif %}
+        {% endwith %}
+      {% endfor %}
+    </table>
+  </div>
+  <div class="sidebar-col">
+    <div class="panel">
+      <h3>${{ product.price }}</h3>
+      <p class="muted">{{ product.stock }} in stock</p>
+      {% if is_customer_logged_in %}
+        <form method="post" action="/cart/add">
+          {% csrf_token %}
+          <input type="hidden" name="product_service" value="{{ domain }}">
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+          <div class="form-group" style="margin-bottom:12px;">
+            <label>Quantity</label>
+            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}">
+          </div>
+          <button class="button" type="submit" style="width:100%">Add to Cart</button>
+        </form>
+      {% else %}
+        <a class="button" href="/login" style="width:100%;display:block;text-align:center;">Login to buy</a>
+      {% endif %}
+    </div>
+    <div class="panel">
+      <a href="/products">← Back to Products</a>
+    </div>
+  </div>
+</div>
+{% if recommended_products %}
+<section style="margin-top:28px;">
+  <div class="section-title-row">
+    <h2>Related Products</h2>
+    <a href="/products?domain={{ domain }}">More in {{ product.domain_label }}</a>
+  </div>
+  <div class="card-grid">
+    {% for item in recommended_products %}
+      <article class="card">
+        <div class="card-meta">{{ item.domain_label }}</div>
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.description|default:'No description yet.'|truncatechars:90 }}</p>
+        <div class="card-footer">
+          <strong>${{ item.price }}</strong>
+          <a href="/products/{{ item.domain }}/{{ item.id }}">Details</a>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+<script>
+window.__CHAT_CONTEXT__ = {
+  domain: "{{ domain|escapejs }}",
+  page_context: "product_detail",
+  product_id: "{{ product.id|escapejs }}",
+};
+</script>
+{% endblock %}

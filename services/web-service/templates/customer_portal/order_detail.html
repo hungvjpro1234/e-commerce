@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Order {{ order.payment_reference }} | E-Commerce{% endblock %}
+{% block content %}
+<h2>Order #{{ order.payment_reference }}</h2>
+<div class="two-col">
+  <div class="panel">
+    <table class="table">
+      <thead><tr><th>Product</th><th>Service</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr></thead>
+      <tbody>
+      {% for item in order.items %}
+        <tr>
+          <td>{{ item.product_name }}</td>
+          <td>{{ item.product_service|capfirst }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>${{ item.unit_price }}</td>
+          <td>${{ item.line_total }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="sidebar-col">
+    <div class="panel">
+      <h3>Summary</h3>
+      <table class="table">
+        <tr><th>Reference</th><td>{{ order.payment_reference }}</td></tr>
+        <tr><th>Status</th><td>{{ order.status|capfirst }}</td></tr>
+        <tr><th>Total</th><td><strong>${{ order.total_amount }}</strong></td></tr>
+        <tr><th>Date</th><td>{{ order.created_at|slice:":10" }}</td></tr>
+      </table>
+      <a class="button secondary" href="/orders" style="display:block;text-align:center;margin-top:14px;">← All Orders</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
